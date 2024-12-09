@@ -338,3 +338,71 @@ Array.from(listaTarefas).forEach(tr => {
         });
     }
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const filtroColaborador = document.getElementById("filtroColaborador");
+    const filtroPrioridade = document.getElementById("filtroPrioridade");
+    const filtroData = document.getElementById("filtroData");
+    const ordenarTarefas = document.getElementById("ordenarTarefas");
+    const tabelaTarefas = document.getElementById("tblTarefas");
+
+    function aplicarFiltros() {
+        const colaboradorFiltro = filtroColaborador.value;
+        const prioridadeFiltro = filtroPrioridade.value;
+        const dataFiltro = filtroData.value ? new Date(filtroData.value) : null;
+
+        const rows = tabelaTarefas.querySelectorAll("tr.row");
+
+        rows.forEach((row) => {
+            const colaborador = row.getAttribute("data-colaborador");
+            const prioridade = row.getAttribute("data-prioridade");
+            const dataLimite = row.getAttribute("data-limite") ? new Date(row.getAttribute("data-limite")) : null;
+
+            const colaboradorMatch = colaboradorFiltro === "todos" || colaboradorFiltro === colaborador;
+            const prioridadeMatch = prioridadeFiltro === "todas" || prioridadeFiltro === prioridade;
+            const dataMatch = !dataFiltro || (dataLimite && dataFiltro.toDateString() === dataLimite.toDateString());
+
+            if (colaboradorMatch && prioridadeMatch && dataMatch) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    function organizarTarefas() {
+        const criterio = ordenarTarefas.value;
+        const rows = Array.from(tabelaTarefas.querySelectorAll("tr.row"));
+
+        rows.sort((a, b) => {
+            let valorA, valorB;
+
+            switch (criterio) {
+                case "descricao":
+                    valorA = a.querySelector("h4").textContent.trim().toLowerCase();
+                    valorB = b.querySelector("h4").textContent.trim().toLowerCase();
+                    break;
+                case "prioridade":
+                    const prioridades = { alta: 1, media: 2, baixa: 3 };
+                    valorA = prioridades[a.getAttribute("data-prioridade")];
+                    valorB = prioridades[b.getAttribute("data-prioridade")];
+                    break;
+                case "data_limite":
+                    valorA = new Date(a.getAttribute("data-limite"));
+                    valorB = new Date(b.getAttribute("data-limite"));
+                    break;
+            }
+
+            return valorA > valorB ? 1 : -1;
+        });
+
+        rows.forEach((row) => tabelaTarefas.querySelector("tbody").appendChild(row));
+    }
+
+    // Eventos
+    filtroColaborador.addEventListener("change", aplicarFiltros);
+    filtroPrioridade.addEventListener("change", aplicarFiltros);
+    filtroData.addEventListener("change", aplicarFiltros);
+    ordenarTarefas.addEventListener("change", organizarTarefas);
+});

@@ -115,8 +115,10 @@ function carregaTarefas(){
             }
 
             echo "
-                <tr class='row'>
-                    <td class='col-9' data-bs-toggle='collapse' data-bs-target='#collapseExample' aria-expanded='false' aria-controls='collapseExample'>
+                <tr class='row' data-colaborador='{$tarefa['responsavel']}' 
+                data-prioridade='{$tarefa['prioridade']}' 
+                data-limite='{$tarefa['data_limite']}'>
+                    <td class='col-9' data-bs-toggle='collapse' data-bs-target='#collapse{$tarefa['id']}' aria-expanded='false' aria-controls='collapse{$tarefa['id']}'>
                         <h4>{$tarefa['descricao']} $status</h4>
                     </td>
                     <td class='col-1'>
@@ -134,7 +136,7 @@ function carregaTarefas(){
                             <i class='bi bi-trash-fill'></i>
                         </button>
                     </td>
-                    <div class='collapse' id='collapseExample'>
+                    <div class='collapse' id='collapse{$tarefa['id']}'>
                         <div class='card card-body my-3'>
                             <div class='row'>
                                 <div class='mb-3 col-6'>
@@ -238,11 +240,47 @@ function listarResponsaveis(){
                 </table>
             </div>
         </div>
-
+        
         <!-- container principal (tarefas) -->
         <div id='principal' class="container col-8">
             <h3 class="text-center">Tarefas: </h3>
             <div id='listagemTarefas' style="width: 90%;" class="mx-auto">
+
+            <div id="filtrosOrdenacao" class="d-flex justify-content-between my-3">
+                <!-- Filtro por Colaborador -->
+                <div>
+                    <label for="filtroColaborador" class="form-label">Filtrar por Colaborador:</label>
+                    <select id="filtroColaborador" class="form-select">
+                        <option value="todos">Todos</option>
+                        <?php listarResponsaveis(); ?>
+                    </select>
+                </div>
+                <!-- Filtro por Prioridade -->
+                <div>
+                    <label for="filtroPrioridade" class="form-label">Filtrar por Prioridade:</label>
+                    <select id="filtroPrioridade" class="form-select">
+                        <option value="todas">Todas</option>
+                        <option value="alta">Alta</option>
+                        <option value="media">Média</option>
+                        <option value="baixa">Baixa</option>
+                    </select>
+                </div>
+                <!-- Filtro por Data -->
+                <div>
+                    <label for="filtroData" class="form-label">Filtrar por Data de Prazo:</label>
+                    <input type="date" id="filtroData" class="form-control">
+                </div>
+                <!-- Ordenação -->
+                <div>
+                    <label for="ordenarTarefas" class="form-label">Ordenar por:</label>
+                    <select id="ordenarTarefas" class="form-select">
+                        <option value="descricao">Descrição</option>
+                        <option value="prioridade">Prioridade</option>
+                        <option value="data_limite">Data de Prazo</option>
+                    </select>
+                </div>
+            </div>
+
                 <table class="table table-hover my-2" id="tblTarefas">
                     <tr>
                         <button class="btn btn-primary" id='btnNovaTarefa' data-bs-toggle="modal" data-bs-target="#cadastroTarefaModal">Novo <i class="bi bi-file-earmark-plus-fill"></i></button>
